@@ -175,3 +175,10 @@
   .stage-heart { animation: stage-heart-fade 1s linear both; }
 }
 @keyframes stage-heart-fade { from { opacity: 1; } to { opacity: 0; } }
+.stage-swarm { position: absolute; bottom: 0; animation: stage-swarm-rise var(--dur) ease-out var(--delay) both; filter: drop-shadow(0 0 10px currentColor); }
+@keyframes stage-swarm-rise {
+  0% { transform: translate(0, 0) rotate(0) scale(.4); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--dx), -85vh) rotate(var(--rot)) scale(1.2); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .stage-swarm { animation: stage-heart-fade 1.2s linear both; } }
