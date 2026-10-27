@@ -184,6 +184,10 @@ export type Database = {
         Args: { p_command: string; p_volume?: number }
         Returns: Json
       }
+      guest_like: {
+        Args: { p_device: string; p_request_id: string }
+        Returns: Json
+      }
       leaderboard: {
         Args: { p_period: string }
         Returns: {

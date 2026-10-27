@@ -175,3 +175,12 @@
   .stage-heart { animation: stage-heart-fade 1s linear both; }
 }
 @keyframes stage-heart-fade { from { opacity: 1; } to { opacity: 0; } }
+.stage-swarm { position: absolute; bottom: 0; animation: stage-swarm-rise var(--dur) ease-out var(--delay) both; filter: drop-shadow(0 0 10px currentColor); }
+@keyframes stage-swarm-rise {
+  0% { transform: translate(0, 0) rotate(0) scale(.4); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translate(var(--dx), -85vh) rotate(var(--rot)) scale(1.2); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .stage-swarm { animation: stage-heart-fade 1.2s linear both; } }
+.swarm-c0 { color: oklch(0.7 0.3 340); } .swarm-c1 { color: oklch(0.85 0.17 200); } .swarm-c2 { color: oklch(0.8 0.15 0); } .swarm-c3 { color: oklch(0.72 0.19 30); }
+.swarm-c4 { color: oklch(0.85 0.17 85); } .swarm-c5 { color: oklch(0.92 0.18 105); } .swarm-c6 { color: oklch(0.88 0.15 195); } .swarm-c7 { color: oklch(0.65 0.25 300); }
