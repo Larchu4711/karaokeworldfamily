@@ -14,13 +14,201 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      favorite_songs: {
+        Row: {
+          channel_title: string | null
+          created_at: string
+          duration: string | null
+          id: string
+          song_title: string
+          thumbnail_url: string | null
+          user_id: string
+          video_id: string
+        }
+        Insert: {
+          channel_title?: string | null
+          created_at?: string
+          duration?: string | null
+          id?: string
+          song_title: string
+          thumbnail_url?: string | null
+          user_id: string
+          video_id: string
+        }
+        Update: {
+          channel_title?: string | null
+          created_at?: string
+          duration?: string | null
+          id?: string
+          song_title?: string
+          thumbnail_url?: string | null
+          user_id?: string
+          video_id?: string
+        }
+        Relationships: []
+      }
+      performance_likes: {
+        Row: {
+          created_at: string
+          id: string
+          liker_id: string
+          request_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          liker_id: string
+          request_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          liker_id?: string
+          request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "performance_likes_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "song_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          card_code: string
+          created_at: string
+          display_name: string
+          id: string
+        }
+        Insert: {
+          card_code?: string
+          created_at?: string
+          display_name?: string
+          id: string
+        }
+        Update: {
+          card_code?: string
+          created_at?: string
+          display_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      song_requests: {
+        Row: {
+          channel_title: string | null
+          created_at: string
+          duration: string | null
+          id: string
+          position: number
+          singer_name: string
+          song_title: string
+          status: string
+          thumbnail_url: string | null
+          updated_at: string
+          user_id: string | null
+          video_id: string
+        }
+        Insert: {
+          channel_title?: string | null
+          created_at?: string
+          duration?: string | null
+          id?: string
+          position?: number
+          singer_name: string
+          song_title: string
+          status?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+          video_id: string
+        }
+        Update: {
+          channel_title?: string | null
+          created_at?: string
+          duration?: string | null
+          id?: string
+          position?: number
+          singer_name?: string
+          song_title?: string
+          status?: string
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+          video_id?: string
+        }
+        Relationships: []
+      }
+      stage_control: {
+        Row: {
+          external: boolean
+          id: boolean
+          paused: boolean
+          restart_revision: number
+          revision: number
+          updated_at: string
+          volume: number
+        }
+        Insert: {
+          external?: boolean
+          id?: boolean
+          paused?: boolean
+          restart_revision?: number
+          revision?: number
+          updated_at?: string
+          volume?: number
+        }
+        Update: {
+          external?: boolean
+          id?: boolean
+          paused?: boolean
+          restart_revision?: number
+          revision?: number
+          updated_at?: string
+          volume?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      dj_complete_current: { Args: { p_id: string }; Returns: Json }
+      dj_reorder: { Args: { p_ids: string[] }; Returns: Json }
+      dj_set_status: { Args: { p_id: string; p_status: string }; Returns: Json }
+      dj_stage_command: {
+        Args: { p_command: string; p_volume?: number }
+        Returns: Json
+      }
+      leaderboard: {
+        Args: { p_period: string }
+        Returns: {
+          card_code: string
+          display_name: string
+          likes: number
+          performances: number
+          singer_id: string
+        }[]
+      }
+      like_counts: {
+        Args: { p_ids: string[] }
+        Returns: {
+          likes: number
+          request_id: string
+        }[]
+      }
+      my_singer_stats: {
+        Args: never
+        Returns: {
+          likes: number
+          performances: number
+          requests: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
