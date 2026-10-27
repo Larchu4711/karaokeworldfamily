@@ -10,33 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DjRouteImport } from './routes/dj'
+import { Route as KontoRouteImport } from './routes/konto'
+import { Route as RanglisteRouteImport } from './routes/rangliste'
+import { Route as StageRouteImport } from './routes/stage'
+import { Route as LikeRequestIdRouteImport } from './routes/like.$requestId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DjRoute = DjRouteImport.update({
+  id: '/dj',
+  path: '/dj',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KontoRoute = KontoRouteImport.update({
+  id: '/konto',
+  path: '/konto',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RanglisteRoute = RanglisteRouteImport.update({
+  id: '/rangliste',
+  path: '/rangliste',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StageRoute = StageRouteImport.update({
+  id: '/stage',
+  path: '/stage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LikeRequestIdRoute = LikeRequestIdRouteImport.update({
+  id: '/like/$requestId',
+  path: '/like/$requestId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dj': typeof DjRoute
+  '/konto': typeof KontoRoute
+  '/rangliste': typeof RanglisteRoute
+  '/stage': typeof StageRoute
+  '/like/$requestId': typeof LikeRequestIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dj': typeof DjRoute
+  '/konto': typeof KontoRoute
+  '/rangliste': typeof RanglisteRoute
+  '/stage': typeof StageRoute
+  '/like/$requestId': typeof LikeRequestIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dj': typeof DjRoute
+  '/konto': typeof KontoRoute
+  '/rangliste': typeof RanglisteRoute
+  '/stage': typeof StageRoute
+  '/like/$requestId': typeof LikeRequestIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/dj' | '/konto' | '/rangliste' | '/stage' | '/like/$requestId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/dj' | '/konto' | '/rangliste' | '/stage' | '/like/$requestId'
+  id:
+    | '__root__'
+    | '/'
+    | '/dj'
+    | '/konto'
+    | '/rangliste'
+    | '/stage'
+    | '/like/$requestId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DjRoute: typeof DjRoute
+  KontoRoute: typeof KontoRoute
+  RanglisteRoute: typeof RanglisteRoute
+  StageRoute: typeof StageRoute
+  LikeRequestIdRoute: typeof LikeRequestIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +106,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dj': {
+      id: '/dj'
+      path: '/dj'
+      fullPath: '/dj'
+      preLoaderRoute: typeof DjRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/konto': {
+      id: '/konto'
+      path: '/konto'
+      fullPath: '/konto'
+      preLoaderRoute: typeof KontoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rangliste': {
+      id: '/rangliste'
+      path: '/rangliste'
+      fullPath: '/rangliste'
+      preLoaderRoute: typeof RanglisteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stage': {
+      id: '/stage'
+      path: '/stage'
+      fullPath: '/stage'
+      preLoaderRoute: typeof StageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/like/$requestId': {
+      id: '/like/$requestId'
+      path: '/like/$requestId'
+      fullPath: '/like/$requestId'
+      preLoaderRoute: typeof LikeRequestIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DjRoute: DjRoute,
+  KontoRoute: KontoRoute,
+  RanglisteRoute: RanglisteRoute,
+  StageRoute: StageRoute,
+  LikeRequestIdRoute: LikeRequestIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
