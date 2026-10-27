@@ -1,0 +1,135 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Heart, Loader2, Maximize, Minimize, Monitor, Volume2 } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { StageVideo } from "@/components/StageVideo";
+import { StageHearts } from "@/components/StageHearts";
+import { useQueue } from "@/hooks/use-queue";
+import { useI18n } from "@/lib/i18n";
+import { djStatus, djSetStatus } from "@/lib/dj.functions";
+import { announceTts } from "@/lib/tts.functions";
+import { playShowOpener } from "@/lib/stage-audio";
+import { countdownRemaining } from "@/lib/stage";
+import { playOrder, type SongRequest } from "@/lib/queue";
+import logo from "@/assets/logo.jpg";
+import { QRCodeSVG } from "qrcode.react";
+import { useStageControl } from "@/hooks/use-stage-control";
+import type { StageControl } from "@/lib/stage-control";
+
+export const Route = createFileRoute("/stage")({
+  head: () => ({ meta: [
+    { title: "Escenario en directo — Pub Manhattan Karaoke" },
+    { name: "description", content: "Pantalla del escenario de Pub Manhattan: karaoke, cuenta atrás y aplausos en directo." },
+    { property: "og:title", content: "Escenario en directo — Pub Manhattan Karaoke" },
+    { property: "og:description", content: "Karaoke y aplausos en directo en Pub Manhattan, Fisterra." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
+    { name: "robots", content: "noindex" },
+  ] }),
+  component: StagePage,
+});
+
+function StagePage() {
+  const { t } = useI18n();
+  const check = useServerFn(djStatus);
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [enabled, setEnabled] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const screen = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const refresh = () => check().then((r) => setAuthed(r.ok)).catch(() => setAuthed(false));
+    refresh();
+    window.addEventListener("focus", refresh);
+    return () => window.removeEventListener("focus", refresh);
+  }, [check]);
+  useEffect(() => {
+    const changed = () => setFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", changed);
+    return () => document.removeEventListener("fullscreenchange", changed);
+  }, []);
+  const toggleFullscreen = () => {
+    const result = document.fullscreenElement ? document.exitFullscreen() : screen.current?.requestFullscreen();
+    result?.catch(() => toast.error(t.errGeneric));
+  };
+  const activate = () => {
+    // Prime audio in the direct user gesture before remote DJ commands arrive.
+    const ctx = new AudioContext();
+    ctx.resume().then(() => ctx.close()).catch(() => {});
+    setEnabled(true);
+    toggleFullscreen();
+  };
+  return <div ref={screen} className="stage-screen relative h-dvh min-h-80 overflow-hidden bg-background text-foreground">
+    {enabled && authed ? <StageShow onUnauthorized={() => { setAuthed(false); setEnabled(false); }} /> : <div className="flex h-full flex-col items-center justify-center gap-6 px-6 pb-16 text-center">
+      <img src={logo} alt="Pub Manhattan" className="logo-glow size-28 sm:size-40" />
+      <div><h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">Pub Manhattan</h1><p className="mt-3 text-lg text-accent">{t.stageView} · Fisterra</p></div>
+      {authed === null ? <Loader2 className="size-7 animate-spin text-accent" /> : authed ? <Button size="lg" onClick={activate}><Volume2 />{t.stageEnable}</Button> : <Button asChild size="lg"><Link to="/dj">{t.stageLogin}</Link></Button>}
+    </div>}
+    <div className="stage-toolbar absolute right-5 top-5 z-40 flex gap-2 opacity-0 focus-within:opacity-100">
+      <Button asChild variant="secondary" size="icon" title={t.dj} aria-label={t.dj}><Link to="/dj"><Monitor className="size-5" /></Link></Button>
+      <Button variant="secondary" size="icon" title={fullscreen ? t.stageExitFullscreen : t.stageFullscreen} aria-label={fullscreen ? t.stageExitFullscreen : t.stageFullscreen} onClick={toggleFullscreen}>{fullscreen ? <Minimize className="size-5" /> : <Maximize className="size-5" />}</Button>
+    </div>
+  </div>;
+}
+
+function StageShow({ onUnauthorized }: { onUnauthorized: () => void }) {
+  const { t } = useI18n();
+  const { rows, loaded, reload } = useQueue();
+  const status = useServerFn(djSetStatus);
+  const { control } = useStageControl();
+  const current = playOrder(rows).find((r) => r.status === "playing");
+  useEffect(() => {
+    const timer = setInterval(reload, 4000);
+    return () => clearInterval(timer);
+  }, [reload]);
+  const complete = useCallback(async (id: string) => {
+    try {
+      const result = await status({ data: { id, status: "done" } });
+      if (!result.ok) toast.error(result.reason ?? t.errGeneric);
+      await reload();
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("unauthorized")) onUnauthorized();
+      else toast.error(t.errGeneric);
+    }
+  }, [status, reload, onUnauthorized, t.errGeneric]);
+  if (current) return <StagePerformance key={current.id} song={current} control={control} onEnded={() => complete(current.id)} />;
+  const next = playOrder(rows)[0];
+  return <div className="flex h-full flex-col items-center justify-center gap-6 px-6 text-center">
+    <img src={logo} alt="Pub Manhattan" className="logo-glow size-32 sm:size-44" />
+    <h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">Pub Manhattan</h1>
+    <p className="text-xl text-accent">{loaded ? t.stageReady : t.stageLoading}</p>
+    {next ? <div className="mt-4 max-w-3xl"><p className="text-sm uppercase text-muted-foreground">{t.upcoming}</p><p className="mt-2 break-words font-display text-3xl sm:text-5xl">{next.singer_name}</p><p className="mt-3 break-words text-lg text-muted-foreground">{next.song_title}</p></div> : <p className="text-muted-foreground">{t.stageWaiting}</p>}
+  </div>;
+}
+
+function StagePerformance({ song, onEnded, control }: { song: SongRequest; onEnded: () => void; control: StageControl }) {
+  const { t, lang } = useI18n();
+  const tts = useServerFn(announceTts);
+  const [count, setCount] = useState(5);
+  const [announced, setAnnounced] = useState(false);
+  const [brian, setBrian] = useState<boolean | null>(null);
+  useEffect(() => {
+    let alive = true;
+    const started = Date.now();
+    const text = t.announce(song.singer_name, song.song_title);
+    const voice = tts({ data: { text } }).then((r) => { if (alive) setBrian(!!r.audio); return r.audio; }).catch(() => { if (alive) setBrian(false); return null; });
+    const opener = playShowOpener(text, lang, voice);
+    opener.finished.then(() => { if (alive) setAnnounced(true); });
+    const interval = setInterval(() => setCount(countdownRemaining(started, Date.now())), 100);
+    return () => { alive = false; clearInterval(interval); opener.stop(); };
+  }, [song.id]);
+  return <>
+    {count === 0 && announced ? <StageVideo videoId={song.video_id} title={song.song_title} onEnded={onEnded} control={control} /> : <div className="absolute inset-0 flex flex-col items-center justify-center px-8 pb-16 text-center">
+      <div className="mb-7 flex items-center gap-3 text-sm uppercase text-accent"><Volume2 className="size-5" />{t.onStage}</div>
+      <h1 className="max-w-5xl break-words font-display text-5xl text-primary neon-text sm:text-7xl">{song.singer_name}</h1>
+      <p className="mt-5 max-w-4xl break-words text-xl text-muted-foreground sm:text-3xl">{song.song_title}</p>
+      <div className="mt-8 flex h-36 w-36 items-center justify-center sm:h-48 sm:w-48" aria-live="off">{count > 0 ? <span key={count} className="animate-countdown font-display text-8xl text-accent neon-text-cyan sm:text-9xl">{count}</span> : <Heart className="stage-welcome-heart size-20 fill-current text-primary" />}</div>
+      <p className="mt-4 text-sm text-muted-foreground">{brian === false ? t.stageAudioFallback : t.stageVoice}</p>
+    </div>}
+    <StageHearts requestId={song.id} />
+    <div className="pointer-events-none absolute bottom-6 left-6 z-20 flex items-center gap-3 rounded-lg border border-accent/40 bg-background/90 p-3">
+      <div className="rounded bg-foreground p-1.5"><QRCodeSVG value={`${typeof window !== "undefined" ? window.location.origin : ""}/like/${song.id}`} size={96} /></div>
+      <p className="max-w-28 text-sm font-bold text-accent">{t.scanToLike}</p>
+    </div>
+  </>;
+}

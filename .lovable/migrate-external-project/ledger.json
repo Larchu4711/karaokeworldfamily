@@ -1,0 +1,9 @@
+[
+  {"capability":"code","source":"zip TanStack Start app","outcome":"migrate","status":"in_progress","next_action":"copy src"},
+  {"capability":"schema","source":"drizzle migrations (5 tables, RPCs)","outcome":"migrate","status":"pending","next_action":"apply migration"},
+  {"capability":"records","source":"old Lovable Cloud db","outcome":"migrate","status":"pending","next_action":"request CSV exports"},
+  {"capability":"auth","source":"email magic link + Google","outcome":"migrate","status":"pending","next_action":"users re-sign-in with same email; no passwords exist"},
+  {"capability":"secrets","source":"YOUTUBE_API_KEY, ELEVENLABS_API_KEY, DJ_PASSWORD, DJ_SESSION_SECRET","outcome":"preserve","status":"pending","next_action":"request via secret form"},
+  {"capability":"ai","source":"Lovable AI gateway","outcome":"preserve","status":"pending","next_action":"auto"},
+  {"capability":"verification","source":"-","outcome":"verify","status":"pending","next_action":"build + routes"}
+]
