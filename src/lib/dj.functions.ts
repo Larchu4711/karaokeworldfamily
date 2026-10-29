@@ -19,7 +19,7 @@ export const djLogin = createServerFn({ method: "POST" })
   });
 
 export const djLogout = createServerFn({ method: "POST" }).handler(async () => {
-  endSession();
+  await endSession();
   return { ok: true };
 });
 
