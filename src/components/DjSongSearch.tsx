@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Plus, Search, PlayCircle } from "lucide-react";
+import { Loader2, Plus, Search, PlayCircle, ChevronUp, ChevronDown, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ export function DjSongSearch({ queueLength, onAdded }: { queueLength: number; on
   const [singer, setSinger] = useState("");
   const [pos, setPos] = useState("end");
   const [adding, setAdding] = useState<string | null>(null);
+  const [open, setOpen] = useState(true);
 
   const run = async () => {
     if (!q.trim()) return;
@@ -27,7 +28,7 @@ export function DjSongSearch({ queueLength, onAdded }: { queueLength: number; on
     try {
       const r = await search({ data: { q } });
       if (r.error) toast.error(t.errGeneric);
-      setResults(r.results);
+      setResults(r.results); setOpen(true);
     } catch { toast.error(t.errGeneric); }
     finally { setBusy(false); }
   };
@@ -38,7 +39,7 @@ export function DjSongSearch({ queueLength, onAdded }: { queueLength: number; on
     try {
       await add({ data: { singer: singer.trim(), title: v.title, videoId: v.videoId, channel: v.channelTitle, thumbnail: v.thumbnail, duration: v.duration, index: pos === "end" ? null : Number(pos) } });
       toast.success(t.djAdded);
-      setSinger(""); onAdded();
+      setSinger(""); setOpen(false); setPreview(null); onAdded();
     } catch { toast.error(t.errGeneric); }
     finally { setAdding(null); }
   };
@@ -61,7 +62,15 @@ export function DjSongSearch({ queueLength, onAdded }: { queueLength: number; on
       </div>
       {results && results.length === 0 && <p className="mt-3 text-sm text-muted-foreground">{t.djSearchNoResults}</p>}
       {results && results.length > 0 && (
-        <ul className="mt-3 max-h-96 space-y-2 overflow-y-auto">
+        <>
+        <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-muted/40 px-3 py-1.5 text-sm">
+          <span className="text-muted-foreground">{results.length} ✓</span>
+          <div className="flex gap-1">
+            <Button size="sm" variant="ghost" onClick={() => { setOpen(!open); setPreview(null); }} aria-label={open ? t.djCollapse : t.djExpand} title={open ? t.djCollapse : t.djExpand}>{open ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}{open ? t.djCollapse : t.djExpand}</Button>
+            <Button size="icon" variant="ghost" className="size-8" onClick={() => { setResults(null); setPreview(null); }} aria-label={t.djClose} title={t.djClose}><X className="size-4" /></Button>
+          </div>
+        </div>
+        {open && <ul className="mt-2 max-h-96 space-y-2 overflow-y-auto">
           {results.map((v) => (
             <li key={v.videoId} className="rounded-xl border border-border p-2">
               <div className="flex items-center gap-3">
@@ -78,7 +87,8 @@ export function DjSongSearch({ queueLength, onAdded }: { queueLength: number; on
               )}
             </li>
           ))}
-        </ul>
+        </ul>}
+        </>
       )}
     </section>
   );
