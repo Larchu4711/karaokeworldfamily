@@ -4,7 +4,6 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { StageBanner } from "@/components/StageBanner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuthUser } from "@/hooks/use-auth-user";
 import { useI18n } from "@/lib/i18n";
 import type { SongRequest } from "@/lib/queue";
 
@@ -23,7 +22,6 @@ export const Route = createFileRoute("/like/$requestId")({
 function LikePage() {
   const { requestId } = Route.useParams();
   const { t } = useI18n();
-  const { user } = useAuthUser();
   const [song, setSong] = useState<SongRequest | null | undefined>(undefined);
   useEffect(() => {
     supabase.from("song_requests").select("*").eq("id", requestId).maybeSingle().then(({ data }) => setSong((data as SongRequest | null) ?? null));
@@ -33,7 +31,7 @@ function LikePage() {
     <main className="mx-auto max-w-md space-y-6 px-4 text-center">
       <h1 className="font-display text-3xl text-primary neon-text">{t.likeTitle}</h1>
       {song === undefined ? <p className="text-muted-foreground">…</p> : song ? <StageBanner current={song} /> : <p className="text-muted-foreground">{t.likeGone}</p>}
-      {!user && <Button asChild size="lg"><Link to="/konto">{t.signInToLike}</Link></Button>}
+      {song && <p className="text-sm text-muted-foreground">{t.likeTap}</p>}
       <Button asChild variant="link"><Link to="/rangliste">{t.leaderboard}</Link></Button>
     </main>
   </div>;

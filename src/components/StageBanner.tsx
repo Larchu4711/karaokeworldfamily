@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useAuthUser } from "@/hooks/use-auth-user";
 import type { SongRequest } from "@/lib/queue";
+import { getDeviceId } from "@/lib/device";
 
 export function StageBanner({ current }: { current: SongRequest | undefined }) {
   const { t } = useI18n();
@@ -21,6 +22,7 @@ export function StageBanner({ current }: { current: SongRequest | undefined }) {
     };
     refresh();
     const iv = setInterval(refresh, 5000);
+    if (!user) setLiked(localStorage.getItem(`pm-liked-${current.id}`) === "1");
     if (user) {
       supabase.from("performance_likes").select("id").eq("request_id", current.id).eq("liker_id", user.id).maybeSingle()
         .then(({ data }) => alive && setLiked(!!data));
@@ -32,7 +34,16 @@ export function StageBanner({ current }: { current: SongRequest | undefined }) {
   const own = !!user && current.user_id === user.id;
 
   const toggle = async (): Promise<void> => {
-    if (!user) { toast(t.signInToLike); return; }
+    if (!user) {
+      if (liked) return;
+      const { data, error } = await supabase.rpc("guest_like", { p_request_id: current.id, p_device: getDeviceId() });
+      const r = data as { ok?: boolean; reason?: string } | null;
+      if (error || !r) { toast.error(t.errGeneric); return; }
+      if (r.ok) { setLiked(true); setCount((c) => c + 1); toast.success(t.likeThanks); localStorage.setItem(`pm-liked-${current.id}`, "1"); }
+      else if (r.reason === "own") toast.error(t.likeOwn);
+      else { setLiked(true); localStorage.setItem(`pm-liked-${current.id}`, "1"); toast(t.likeAlready); }
+      return;
+    }
     if (liked) {
       await supabase.from("performance_likes").delete().eq("request_id", current.id).eq("liker_id", user.id);
       setLiked(false); setCount((c) => Math.max(0, c - 1));

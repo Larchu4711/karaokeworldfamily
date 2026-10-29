@@ -18,6 +18,8 @@ import { useI18n } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { useStageControl } from "@/hooks/use-stage-control";
+import { DjSongSearch } from "@/components/DjSongSearch";
+import { Mic2, Trophy, UserRound } from "lucide-react";
 import { Pause, RotateCcw, Volume2, CheckCheck } from "lucide-react";
 
 export const Route = createFileRoute("/dj")({
@@ -161,8 +163,15 @@ function Desk({ onLogout }: { onLogout: () => void }) {
         <Button asChild variant="secondary"><Link to="/stage" target="_blank" rel="noopener noreferrer" onClick={() => changeStage(true)}><Monitor className="size-4" />{t.stageOpen}</Link></Button>
         <Button variant="secondary" onClick={async () => { await logout(); onLogout(); }}><LogOut className="size-4" /> {t.djLogout}</Button>
       </header>
+      <nav className="mb-4 flex flex-wrap gap-2">
+        <Button asChild size="sm" variant="outline"><Link to="/"><Mic2 className="size-4" />{t.home}</Link></Button>
+        <Button asChild size="sm" variant="outline"><Link to="/rangliste"><Trophy className="size-4" />{t.leaderboard}</Link></Button>
+        <Button asChild size="sm" variant="outline"><Link to="/konto"><UserRound className="size-4" />{t.account}</Link></Button>
+        <Button asChild size="sm" variant="outline"><Link to="/stage" target="_blank" rel="noopener noreferrer"><Monitor className="size-4" />{t.stageView}</Link></Button>
+      </nav>
       <label className="mb-6 flex w-fit items-center gap-3 text-sm text-muted-foreground"><Switch checked={externalStage} onCheckedChange={changeStage} />{externalStage ? t.stageExternal : t.stageLocal}</label>
       {externalStage && <StageControls playing={order.find((r) => r.status === "playing")} act={act} />}
+      <DjSongSearch queueLength={order.length} onAdded={reload} />
       <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
         <section>
           <div className="mb-2 flex justify-between text-sm text-muted-foreground">
