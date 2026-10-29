@@ -37,10 +37,11 @@ export function StageBanner({ current }: { current: SongRequest | undefined }) {
     if (!user) {
       if (liked) return;
       const { data, error } = await supabase.rpc("guest_like", { p_request_id: current.id, p_device: getDeviceId() });
-      const r = data as { ok?: boolean; reason?: string } | null;
+      const r = data as { ok?: boolean; reason?: string; already?: boolean } | null;
       if (error || !r) { toast.error(t.errGeneric); return; }
-      if (r.ok) { setLiked(true); setCount((c) => c + 1); toast.success(t.likeThanks); localStorage.setItem(`pm-liked-${current.id}`, "1"); }
+      if (r.ok && !r.already) { setLiked(true); setCount((c) => c + 1); toast.success(t.likeThanks); localStorage.setItem(`pm-liked-${current.id}`, "1"); }
       else if (r.reason === "own") toast.error(t.likeOwn);
+      else if (r.reason === "gone") toast.error(t.likeGone);
       else { setLiked(true); localStorage.setItem(`pm-liked-${current.id}`, "1"); toast(t.likeAlready); }
       return;
     }
