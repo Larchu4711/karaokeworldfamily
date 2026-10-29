@@ -76,3 +76,31 @@ export const djCompleteCurrent = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return result as { ok: boolean; reason?: string };
   });
+
+export const djAddSong = createServerFn({ method: "POST" })
+  .inputValidator((d) => z.object({
+    singer: z.string().trim().min(1).max(60),
+    title: z.string().min(1).max(200),
+    videoId: z.string().regex(/^[\w-]{6,20}$/),
+    channel: z.string().max(200).nullable(),
+    thumbnail: z.string().url().max(500).nullable(),
+    duration: z.string().max(20).nullable(),
+    index: z.number().int().min(0).max(500).nullable(),
+  }).parse(d))
+  .handler(async ({ data }) => {
+    await requireDj();
+    const db = await admin();
+    const { data: row, error } = await db.from("song_requests").insert({
+      singer_name: data.singer, song_title: data.title, video_id: data.videoId,
+      channel_title: data.channel, thumbnail_url: data.thumbnail, duration: data.duration,
+    }).select("id").single();
+    if (error) throw new Error(error.message);
+    if (data.index !== null) {
+      const { data: rows } = await db.from("song_requests").select("id,status,position,created_at").in("status", ["playing", "next", "waiting"]);
+      const { playOrder } = await import("./queue");
+      const ids = playOrder(rows ?? []).map((r) => r.id).filter((id) => id !== row.id);
+      ids.splice(Math.min(data.index, ids.length), 0, row.id);
+      await db.rpc("dj_reorder", { p_ids: ids });
+    }
+    return { ok: true };
+  });
