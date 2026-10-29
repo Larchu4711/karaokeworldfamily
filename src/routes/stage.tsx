@@ -94,11 +94,24 @@ function StageShow({ onUnauthorized }: { onUnauthorized: () => void }) {
   }, [status, reload, onUnauthorized, t.errGeneric]);
   if (current) return <StagePerformance key={current.id} song={current} control={control} onEnded={() => complete(current.id)} />;
   const next = playOrder(rows)[0];
-  return <div className="flex h-full flex-col items-center justify-center gap-6 px-6 text-center">
-    <img src={logo} alt="Pub Manhattan" className="logo-glow size-32 sm:size-44" />
-    <h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">Pub Manhattan</h1>
-    <p className="text-xl text-accent">{loaded ? t.stageReady : t.stageLoading}</p>
-    {next ? <div className="mt-4 max-w-3xl"><p className="text-sm uppercase text-muted-foreground">{t.upcoming}</p><p className="mt-2 break-words font-display text-3xl sm:text-5xl">{next.singer_name}</p><p className="mt-3 break-words text-lg text-muted-foreground">{next.song_title}</p></div> : <p className="text-muted-foreground">{t.stageWaiting}</p>}
+  const steps = [t.ssStep1, t.ssStep2, t.ssStep3, t.ssStep4];
+  return <div className="animate-in fade-in flex h-full flex-col items-center justify-center gap-8 px-8 duration-1000 lg:flex-row lg:gap-16">
+    <div className="flex flex-col items-center gap-4 text-center">
+      <img src={logo} alt="Pub Manhattan" className="logo-glow size-28 sm:size-36" />
+      <h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">Pub Manhattan</h1>
+      <div className="stage-qr-pulse mt-2 rounded-2xl bg-foreground p-4"><QRCodeSVG value={typeof window !== "undefined" ? window.location.origin : ""} size={220} /></div>
+      <p className="text-lg font-bold text-accent">{t.ssScan}</p>
+    </div>
+    <div className="max-w-xl">
+      <h2 className="font-display text-3xl text-accent neon-text-cyan sm:text-5xl">{t.ssTitle}</h2>
+      <ol className="mt-6 space-y-4">
+        {steps.map((s, i) => <li key={i} className="stage-step flex items-center gap-4 text-xl sm:text-2xl" style={{ animationDelay: `${300 + i * 400}ms` }}>
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-primary font-display text-primary">{i + 1}</span>{s}</li>)}
+      </ol>
+      <div className="mt-8 rounded-xl border border-border bg-card/70 p-4">
+        {!loaded ? <p className="text-muted-foreground">{t.stageLoading}</p> : next ? <><p className="text-sm uppercase text-muted-foreground">{t.upcoming}</p><p className="mt-1 break-words font-display text-2xl sm:text-3xl">{next.singer_name}</p><p className="break-words text-muted-foreground">{next.song_title}</p></> : <p className="text-muted-foreground">{t.stageWaiting}</p>}
+      </div>
+    </div>
   </div>;
 }
 
@@ -127,9 +140,9 @@ function StagePerformance({ song, onEnded, control }: { song: SongRequest; onEnd
       <p className="mt-4 text-sm text-muted-foreground">{brian === false ? t.stageAudioFallback : t.stageVoice}</p>
     </div>}
     <StageHearts requestId={song.id} />
-    <div className="pointer-events-none absolute bottom-6 left-6 z-20 flex items-center gap-3 rounded-lg border border-accent/40 bg-background/90 p-3">
+    <div className="pointer-events-none absolute left-6 top-6 z-20 flex w-min flex-col items-center gap-1.5 rounded-lg border border-accent/40 bg-background/90 p-2">
       <div className="rounded bg-foreground p-1.5"><QRCodeSVG value={`${typeof window !== "undefined" ? window.location.origin : ""}/like/${song.id}`} size={96} /></div>
-      <p className="max-w-28 text-sm font-bold text-accent">{t.scanToLike}</p>
+      <p className="w-full whitespace-nowrap text-center text-[11px] font-bold text-accent">{t.sendLike}</p>
     </div>
   </>;
 }
