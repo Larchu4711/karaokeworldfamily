@@ -24,11 +24,14 @@ export function StagePlayer({ song, onClose, onEnded }: { song: SongRequest; onC
     return () => { clearInterval(iv); handle.stop(); };
   }, [song.id]);
 
+  const frame = useRef<HTMLIFrameElement>(null);
   // Detect end of video via YouTube iframe postMessage API
   useEffect(() => {
     if (count > 0) return;
     const onMsg = (e: MessageEvent) => {
-      if (typeof e.data !== "string" || !e.origin.includes("youtube")) return;
+      if (typeof e.data !== "string") return;
+      if (e.origin !== "https://www.youtube.com" && e.origin !== "https://www.youtube-nocookie.com") return;
+      if (!frame.current || e.source !== frame.current.contentWindow) return;
       try {
         const d = JSON.parse(e.data);
         if (d.event === "onStateChange" && d.info === 0) onEnded();
@@ -73,6 +76,7 @@ export function StagePlayer({ song, onClose, onEnded }: { song: SongRequest; onC
           </div>
         ) : (
           <iframe
+            ref={frame}
             className="absolute inset-0 size-full"
             src={`https://www.youtube.com/embed/${song.video_id}?autoplay=1&enablejsapi=1&rel=0&origin=${encodeURIComponent(origin)}`}
             allow="autoplay; encrypted-media; fullscreen"
