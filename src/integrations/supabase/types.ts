@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      dj_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
       favorite_songs: {
         Row: {
           channel_title: string | null

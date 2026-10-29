@@ -28,22 +28,40 @@ export function checkPassword(input: string) {
   return safeEqual(input, pw);
 }
 
+async function db() {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  return supabaseAdmin;
+}
+
+function parse(token: string | undefined) {
+  if (!token) return null;
+  const [exp, sid, sig] = token.split(".");
+  if (!exp || !sid || !sig || Number(exp) < Date.now() / 1000) return null;
+  return { exp, sid, sig };
+}
+
 export async function startSession() {
   const exp = Math.floor(Date.now() / 1000) + MAX_AGE;
-  const token = `${exp}.${await hmac(String(exp))}`;
+  const sid = crypto.randomUUID();
+  const { error } = await (await db()).from("dj_sessions").insert({ id: sid, expires_at: new Date(exp * 1000).toISOString() });
+  if (error) throw new Error("session");
+  const token = `${exp}.${sid}.${await hmac(`${exp}.${sid}`)}`;
   setCookie(COOKIE, token, { httpOnly: true, secure: true, sameSite: "none", partitioned: true, path: "/", maxAge: MAX_AGE });
 }
 
-export function endSession() {
+export async function endSession() {
+  const p = parse(getCookie(COOKIE));
+  if (p && safeEqual(p.sig, await hmac(`${p.exp}.${p.sid}`))) {
+    await (await db()).from("dj_sessions").delete().eq("id", p.sid);
+  }
   deleteCookie(COOKIE, { path: "/", secure: true, sameSite: "none", partitioned: true });
 }
 
 export async function isDj() {
-  const token = getCookie(COOKIE);
-  if (!token) return false;
-  const [exp, sig] = token.split(".");
-  if (!exp || !sig || Number(exp) < Date.now() / 1000) return false;
-  return safeEqual(sig, await hmac(exp));
+  const p = parse(getCookie(COOKIE));
+  if (!p || !safeEqual(p.sig, await hmac(`${p.exp}.${p.sid}`))) return false;
+  const { data } = await (await db()).from("dj_sessions").select("id").eq("id", p.sid).gt("expires_at", new Date().toISOString()).maybeSingle();
+  return !!data;
 }
 
 export async function requireDj() {
