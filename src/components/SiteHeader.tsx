@@ -9,6 +9,8 @@ export function SiteHeader() {
   const { t, lang, setLang } = useI18n();
   const { user } = useAuthUser();
   return (
+    <>
+    <div className="rainbow-bar" aria-hidden />
     <header className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4">
       <Link to="/" className="flex items-center gap-3">
         <img src={logo} alt="The World Family" width={56} height={56} className="logo-glow size-14 object-cover" />
@@ -43,5 +45,6 @@ export function SiteHeader() {
         </div>
       </nav>
     </header>
+    </>
   );
 }

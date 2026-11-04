@@ -63,7 +63,7 @@ function StagePage() {
   return <div ref={screen} className="stage-screen relative h-dvh min-h-80 overflow-hidden bg-background text-foreground">
     {enabled && authed ? <StageShow onUnauthorized={() => { setAuthed(false); setEnabled(false); }} /> : <div className="flex h-full flex-col items-center justify-center gap-6 px-6 pb-16 text-center">
       <img src={logo} alt="The World Family" className="logo-glow size-28 sm:size-40" />
-      <div><h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">The World Family</h1><p className="mt-3 text-lg text-accent">{t.stageView}</p></div>
+      <div><h1 className="font-display text-4xl text-rainbow sm:text-6xl">The World Family</h1><p className="mt-3 text-lg text-accent">{t.stageView}</p></div>
       {authed === null ? <Loader2 className="size-7 animate-spin text-accent" /> : authed ? <Button size="lg" onClick={activate}><Volume2 />{t.stageEnable}</Button> : <Button asChild size="lg"><Link to="/dj">{t.stageLogin}</Link></Button>}
     </div>}
     <div className="stage-toolbar absolute right-5 top-5 z-40 flex gap-2 opacity-0 focus-within:opacity-100">
@@ -99,7 +99,7 @@ function StageShow({ onUnauthorized }: { onUnauthorized: () => void }) {
   return <div className="animate-in fade-in flex h-full flex-col items-center justify-center gap-8 px-8 duration-1000 lg:flex-row lg:gap-16">
     <div className="flex flex-col items-center gap-4 text-center">
       <img src={logo} alt="The World Family" className="logo-glow size-28 sm:size-36" />
-      <h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">The World Family</h1>
+      <h1 className="font-display text-4xl text-rainbow sm:text-6xl">The World Family</h1>
       <div className="stage-qr-pulse mt-2 rounded-2xl bg-foreground p-4"><QRCodeSVG value={typeof window !== "undefined" ? window.location.origin : ""} size={220} /></div>
       <p className="text-lg font-bold text-accent">{t.ssScan}</p>
     </div>
