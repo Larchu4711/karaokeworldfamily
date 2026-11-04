@@ -14,9 +14,9 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/konto")({
   head: () => ({
     meta: [
-      { title: "Mi tarjeta de cantante — Pub Manhattan" },
-      { name: "description", content: "Tu tarjeta de cantante, likes, actuaciones y canciones favoritas en Pub Manhattan." },
-      { property: "og:title", content: "Mi tarjeta de cantante — Pub Manhattan" },
+      { title: "Mi tarjeta de cantante — The World Family" },
+      { name: "description", content: "Tu tarjeta de cantante, likes, actuaciones y canciones favoritas en The World Family." },
+      { property: "og:title", content: "Mi tarjeta de cantante — The World Family" },
       { property: "og:description", content: "Likes, actuaciones y favoritos de tu noche de karaoke." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

@@ -13,7 +13,8 @@ import { StagePlayer } from "@/components/StagePlayer";
 import { useQueue } from "@/hooks/use-queue";
 import { playOrder, type SongRequest } from "@/lib/queue";
 import { djDelete, djLogin, djLogout, djReorder, djSetStatus, djStatus } from "@/lib/dj.functions";
-import logo from "@/assets/logo.jpg";
+import logoAsset from "@/assets/world-family-logo.png.asset.json";
+const logo = logoAsset.url;
 import { useI18n } from "@/lib/i18n";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
@@ -25,9 +26,9 @@ import { Pause, RotateCcw, Volume2, CheckCheck } from "lucide-react";
 export const Route = createFileRoute("/dj")({
   head: () => ({
     meta: [
-      { title: "DJ Desk — Pub Manhattan" },
-      { name: "description", content: "Panel del DJ para gestionar la cola de karaoke de Pub Manhattan." },
-      { property: "og:title", content: "DJ Desk — Pub Manhattan" },
+      { title: "DJ Desk — The World Family" },
+      { name: "description", content: "Panel del DJ para gestionar la cola de karaoke de The World Family." },
+      { property: "og:title", content: "DJ Desk — The World Family" },
       { property: "og:description", content: "Gestión de la cola de karaoke." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

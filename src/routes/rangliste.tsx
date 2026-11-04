@@ -8,9 +8,9 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/rangliste")({
   head: () => ({
     meta: [
-      { title: "Ranking de cantantes — Pub Manhattan" },
-      { name: "description", content: "Los cantantes más aplaudidos de Pub Manhattan: esta noche, este mes y de siempre." },
-      { property: "og:title", content: "Ranking de cantantes — Pub Manhattan" },
+      { title: "Ranking de cantantes — The World Family" },
+      { name: "description", content: "Los cantantes más aplaudidos de The World Family: esta noche, este mes y de siempre." },
+      { property: "og:title", content: "Ranking de cantantes — The World Family" },
       { property: "og:description", content: "Los cantantes con más likes y actuaciones." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

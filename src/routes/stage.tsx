@@ -13,17 +13,18 @@ import { announceTts } from "@/lib/tts.functions";
 import { playShowOpener } from "@/lib/stage-audio";
 import { countdownRemaining } from "@/lib/stage";
 import { playOrder, type SongRequest } from "@/lib/queue";
-import logo from "@/assets/logo.jpg";
+import logoAsset from "@/assets/world-family-logo.png.asset.json";
+const logo = logoAsset.url;
 import { QRCodeSVG } from "qrcode.react";
 import { useStageControl } from "@/hooks/use-stage-control";
 import type { StageControl } from "@/lib/stage-control";
 
 export const Route = createFileRoute("/stage")({
   head: () => ({ meta: [
-    { title: "Escenario en directo — Pub Manhattan Karaoke" },
-    { name: "description", content: "Pantalla del escenario de Pub Manhattan: karaoke, cuenta atrás y aplausos en directo." },
-    { property: "og:title", content: "Escenario en directo — Pub Manhattan Karaoke" },
-    { property: "og:description", content: "Karaoke y aplausos en directo en Pub Manhattan, Fisterra." },
+    { title: "Escenario en directo — The World Family Karaoke" },
+    { name: "description", content: "Pantalla del escenario de The World Family: karaoke, cuenta atrás y aplausos en directo." },
+    { property: "og:title", content: "Escenario en directo — The World Family Karaoke" },
+    { property: "og:description", content: "Karaoke y aplausos en directo en The World Family." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" },
     { name: "robots", content: "noindex" },
   ] }),
@@ -61,8 +62,8 @@ function StagePage() {
   };
   return <div ref={screen} className="stage-screen relative h-dvh min-h-80 overflow-hidden bg-background text-foreground">
     {enabled && authed ? <StageShow onUnauthorized={() => { setAuthed(false); setEnabled(false); }} /> : <div className="flex h-full flex-col items-center justify-center gap-6 px-6 pb-16 text-center">
-      <img src={logo} alt="Pub Manhattan" className="logo-glow size-28 sm:size-40" />
-      <div><h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">Pub Manhattan</h1><p className="mt-3 text-lg text-accent">{t.stageView} · Fisterra</p></div>
+      <img src={logo} alt="The World Family" className="logo-glow size-28 sm:size-40" />
+      <div><h1 className="font-display text-4xl text-rainbow sm:text-6xl">The World Family</h1><p className="mt-3 text-lg text-accent">{t.stageView}</p></div>
       {authed === null ? <Loader2 className="size-7 animate-spin text-accent" /> : authed ? <Button size="lg" onClick={activate}><Volume2 />{t.stageEnable}</Button> : <Button asChild size="lg"><Link to="/dj">{t.stageLogin}</Link></Button>}
     </div>}
     <div className="stage-toolbar absolute right-5 top-5 z-40 flex gap-2 opacity-0 focus-within:opacity-100">
@@ -97,8 +98,8 @@ function StageShow({ onUnauthorized }: { onUnauthorized: () => void }) {
   const steps = [t.ssStep1, t.ssStep2, t.ssStep3, t.ssStep4];
   return <div className="animate-in fade-in flex h-full flex-col items-center justify-center gap-8 px-8 duration-1000 lg:flex-row lg:gap-16">
     <div className="flex flex-col items-center gap-4 text-center">
-      <img src={logo} alt="Pub Manhattan" className="logo-glow size-28 sm:size-36" />
-      <h1 className="font-display text-4xl text-primary neon-text sm:text-6xl">Pub Manhattan</h1>
+      <img src={logo} alt="The World Family" className="logo-glow size-28 sm:size-36" />
+      <h1 className="font-display text-4xl text-rainbow sm:text-6xl">The World Family</h1>
       <div className="stage-qr-pulse mt-2 rounded-2xl bg-foreground p-4"><QRCodeSVG value={typeof window !== "undefined" ? window.location.origin : ""} size={220} /></div>
       <p className="text-lg font-bold text-accent">{t.ssScan}</p>
     </div>
