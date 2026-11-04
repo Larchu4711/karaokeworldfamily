@@ -21,9 +21,9 @@ import type { VideoResult } from "@/lib/youtube.server";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Pub Manhattan Karaoke — Pide tu canción" },
-      { name: "description", content: "Busca tu canción de karaoke, pídela al DJ y sigue tu turno en directo en Pub Manhattan, Fisterra." },
-      { property: "og:title", content: "Pub Manhattan Karaoke — Pide tu canción" },
+      { title: "The World Family Karaoke — Pide tu canción" },
+      { name: "description", content: "Busca tu canción de karaoke, pídela al DJ y sigue tu turno en directo en The World Family." },
+      { property: "og:title", content: "The World Family Karaoke — Pide tu canción" },
       { property: "og:description", content: "Pide tu canción de karaoke y sigue tu turno en directo." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

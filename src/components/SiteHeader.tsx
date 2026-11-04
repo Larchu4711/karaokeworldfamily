@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Trophy, UserRound, Mic2, Headphones } from "lucide-react";
-import logo from "@/assets/logo.jpg";
+import logoAsset from "@/assets/world-family-logo.png.asset.json";
+const logo = logoAsset.url;
 import { useI18n, type Lang } from "@/lib/i18n";
 import { useAuthUser } from "@/hooks/use-auth-user";
 
@@ -10,9 +11,9 @@ export function SiteHeader() {
   return (
     <header className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4">
       <Link to="/" className="flex items-center gap-3">
-        <img src={logo} alt="Pub Manhattan" width={56} height={56} className="logo-glow size-14 object-cover" />
+        <img src={logo} alt="The World Family" width={56} height={56} className="logo-glow size-14 object-cover" />
         <div className="hidden sm:block">
-          <div className="font-display text-xl leading-none text-primary neon-text">Pub Manhattan</div>
+          <div className="font-display text-xl leading-none text-primary neon-text">The World Family</div>
           <div className="text-xs uppercase tracking-[0.25em] text-accent">{t.tagline}</div>
         </div>
       </Link>

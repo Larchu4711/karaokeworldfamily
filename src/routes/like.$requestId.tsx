@@ -9,10 +9,10 @@ import type { SongRequest } from "@/lib/queue";
 
 export const Route = createFileRoute("/like/$requestId")({
   head: () => ({ meta: [
-    { title: "Dale like al cantante — Pub Manhattan Karaoke" },
-    { name: "description", content: "Aplaude con un like a quien canta ahora en Pub Manhattan, Fisterra." },
-    { property: "og:title", content: "Dale like al cantante — Pub Manhattan" },
-    { property: "og:description", content: "Un like = un punto en el ranking de Pub Manhattan." },
+    { title: "Dale like al cantante — The World Family Karaoke" },
+    { name: "description", content: "Aplaude con un like a quien canta ahora en The World Family." },
+    { property: "og:title", content: "Dale like al cantante — The World Family" },
+    { property: "og:description", content: "Un like = un punto en el ranking de The World Family." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
     { name: "robots", content: "noindex" },
   ] }),

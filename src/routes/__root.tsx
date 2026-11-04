@@ -80,8 +80,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Pub Manhattan Karaoke" },
-      { name: "description", content: "Karaoke en Pub Manhattan, Fisterra." },
+      { title: "The World Family Karaoke" },
+      { name: "description", content: "Karaoke en The World Family." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
