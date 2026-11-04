@@ -14,6 +14,7 @@ import { playShowOpener } from "@/lib/stage-audio";
 import { countdownRemaining } from "@/lib/stage";
 import { playOrder, type SongRequest } from "@/lib/queue";
 import logoAsset from "@/assets/world-family-logo.png.asset.json";
+import screensaverVideo from "@/assets/world_family_screensaver.mp4.asset.json";
 const logo = logoAsset.url;
 import { QRCodeSVG } from "qrcode.react";
 import { useStageControl } from "@/hooks/use-stage-control";
@@ -95,23 +96,14 @@ function StageShow({ onUnauthorized }: { onUnauthorized: () => void }) {
   }, [status, reload, onUnauthorized, t.errGeneric]);
   if (current) return <StagePerformance key={current.id} song={current} control={control} onEnded={() => complete(current.id)} />;
   const next = playOrder(rows)[0];
-  const steps = [t.ssStep1, t.ssStep2, t.ssStep3, t.ssStep4];
-  return <div className="animate-in fade-in flex h-full flex-col items-center justify-center gap-8 px-8 duration-1000 lg:flex-row lg:gap-16">
-    <div className="flex flex-col items-center gap-4 text-center">
-      <img src={logo} alt="The World Family" className="logo-glow size-28 sm:size-36" />
-      <h1 className="font-display text-4xl text-rainbow sm:text-6xl">The World Family</h1>
-      <div className="stage-qr-pulse mt-2 rounded-2xl bg-foreground p-4"><QRCodeSVG value={typeof window !== "undefined" ? window.location.origin : ""} size={220} /></div>
-      <p className="text-lg font-bold text-accent">{t.ssScan}</p>
+  return <div className="animate-in fade-in absolute inset-0 overflow-hidden duration-1000">
+    <video src={screensaverVideo.url} autoPlay muted loop playsInline className="absolute inset-0 size-full object-cover" aria-hidden="true" />
+    <div className="absolute bottom-8 left-8 flex flex-col items-center gap-2 rounded-2xl border border-accent/40 bg-background/80 p-3">
+      <div className="stage-qr-pulse rounded-xl bg-foreground p-2"><QRCodeSVG value={typeof window !== "undefined" ? window.location.origin : ""} size={170} /></div>
+      <p className="text-base font-bold text-accent">{t.ssScan}</p>
     </div>
-    <div className="max-w-xl">
-      <h2 className="font-display text-3xl text-accent neon-text-cyan sm:text-5xl">{t.ssTitle}</h2>
-      <ol className="mt-6 space-y-4">
-        {steps.map((s, i) => <li key={i} className="stage-step flex items-center gap-4 text-xl sm:text-2xl" style={{ animationDelay: `${300 + i * 400}ms` }}>
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-full border-2 border-primary font-display text-primary">{i + 1}</span>{s}</li>)}
-      </ol>
-      <div className="mt-8 rounded-xl border border-border bg-card/70 p-4">
-        {!loaded ? <p className="text-muted-foreground">{t.stageLoading}</p> : next ? <><p className="text-sm uppercase text-muted-foreground">{t.upcoming}</p><p className="mt-1 break-words font-display text-2xl sm:text-3xl">{next.singer_name}</p><p className="break-words text-muted-foreground">{next.song_title}</p></> : <p className="text-muted-foreground">{t.stageWaiting}</p>}
-      </div>
+    <div className="absolute bottom-8 right-8 max-w-md rounded-xl border border-border bg-background/80 p-4 text-right">
+      {!loaded ? <p className="text-muted-foreground">{t.stageLoading}</p> : next ? <><p className="text-sm uppercase text-muted-foreground">{t.upcoming}</p><p className="mt-1 break-words font-display text-2xl sm:text-3xl">{next.singer_name}</p><p className="break-words text-muted-foreground">{next.song_title}</p></> : <p className="text-muted-foreground">{t.stageWaiting}</p>}
     </div>
   </div>;
 }
