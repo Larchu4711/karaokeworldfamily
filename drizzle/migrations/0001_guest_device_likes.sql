@@ -17,4 +17,5 @@
 --   RETURN jsonb_build_object('ok', true, 'already', false);
 -- END; $$;
 -- REVOKE ALL ON FUNCTION public.guest_like(uuid, text) FROM PUBLIC;
--- GRANT EXECUTE ON FUNCTION public.guest_like(uuid, text) TO anon, authenticated;SELECT 1;
+-- GRANT EXECUTE ON FUNCTION public.guest_like(uuid, text) TO anon, authenticated;
+SELECT 1;

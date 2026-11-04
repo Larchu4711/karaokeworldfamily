@@ -228,4 +228,5 @@
 --  RETURN public.dj_set_status(p_id,'done');
 -- END; $$;
 -- REVOKE ALL ON FUNCTION public.dj_complete_current(uuid) FROM PUBLIC, anon, authenticated;
--- GRANT EXECUTE ON FUNCTION public.dj_complete_current(uuid) TO service_role;SELECT 1;
+-- GRANT EXECUTE ON FUNCTION public.dj_complete_current(uuid) TO service_role;
+SELECT 1;
