@@ -14,7 +14,7 @@ import { playShowOpener } from "@/lib/stage-audio";
 import { countdownRemaining } from "@/lib/stage";
 import { playOrder, type SongRequest } from "@/lib/queue";
 import logoAsset from "@/assets/world-family-logo.png.asset.json";
-import screensaverVideo from "@/assets/world_family_screensaver.mp4.asset.json";
+import screensaverVideo from "@/assets/world_family_scan_sing.mp4.asset.json";
 const logo = logoAsset.url;
 import { QRCodeSVG } from "qrcode.react";
 import { useStageControl } from "@/hooks/use-stage-control";
